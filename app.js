@@ -132,7 +132,7 @@ async function loadRail({ code, domId, title, lines }, apiKey) {
 
   // Optional: keep the <h2> synced
   const h2 = card.querySelector("h2");
-  if (h2 && title) h2.textContent = `Rail — ${title} • ${code}`;
+  if (h2 && title) h2.textContent = `Rail — ${title}`;
 
   setCardStatus(card, "Loading…");
 
