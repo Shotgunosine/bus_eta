@@ -92,6 +92,12 @@ function escapeHtml(s) {
 // === Data loaders ===
 async function loadBus({ domId, stopId }, apiKey) {
   const card = document.getElementById(`bus-${domId}`);
+  const card = document.getElementById(cardId);
+
+  if (!card) {
+    console.error(`Missing element #${cardId} in index.html`);
+    return;
+  }
   setCardStatus(card, "Loading…");
 
   const data = await wmataFetchJson(
