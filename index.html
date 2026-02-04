@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Next Metro Times</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Next Metro Times</h1>
+      <p class="sub">
+        Bus stops: 8410, 8553, 21912 • Station: Fort Totten (B06)
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>API Key</h2>
+        <p class="muted">
+          Required to call WMATA APIs. Stored locally in your browser (localStorage).
+        </p>
+        <div class="row">
+          <input id="apiKey" type="password" placeholder="Paste WMATA API key" />
+          <button id="saveKey">Save</button>
+          <button id="clearKey" class="secondary">Clear</button>
+        </div>
+        <p id="keyStatus" class="muted"></p>
+      </section>
+
+      <section class="grid">
+        <section class="card" id="bus-8410">
+          <h2>Bus — Stop 8410</h2>
+          <div class="meta"><span class="status" data-status></span><span data-updated></span></div>
+          <ul class="list" data-list></ul>
+        </section>
+
+        <section class="card" id="bus-8553">
+          <h2>Bus — Stop 8553</h2>
+          <div class="meta"><span class="status" data-status></span><span data-updated></span></div>
+          <ul class="list" data-list></ul>
+        </section>
+
+        <section class="card" id="bus-21912">
+          <h2>Bus — Stop 21912</h2>
+          <div class="meta"><span class="status" data-status></span><span data-updated></span></div>
+          <ul class="list" data-list></ul>
+        </section>
+
+        <section class="card" id="rail-b06">
+          <h2>Rail — Fort Totten (B06)</h2>
+          <div class="meta"><span class="status" data-status></span><span data-updated></span></div>
+          <ul class="list" data-list></ul>
+        </section>
+      </section>
+
+      <section class="card">
+        <h2>Refresh</h2>
+        <div class="row">
+          <button id="refreshNow">Refresh now</button>
+          <label class="muted">
+            <input type="checkbox" id="autoRefresh" checked />
+            Auto-refresh every 30s
+          </label>
+        </div>
+        <p class="muted" id="globalStatus"></p>
+      </section>
+    </main>
+
+    <footer>
+      <p class="muted">
+        Data from WMATA APIs (requires key). If you see CORS errors, use the optional proxy in README.
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
