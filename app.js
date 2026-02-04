@@ -23,6 +23,10 @@ const withProxy = (url) => url;
 // === Helpers ===
 const $ = (sel, root = document) => root.querySelector(sel);
 
+function getUrlParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
 function nowStamp() {
   return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
@@ -169,12 +173,25 @@ async function refreshAll() {
 
 // === UI wiring ===
 function initKeyUI() {
+  const card = document.getElementById("api-key-card");
   const input = $("#apiKey");
   const status = $("#keyStatus");
 
-  const existing = getApiKey();
-  if (existing) {
-    input.value = existing;
+  const urlKey = getUrlParam("key");
+  const storedKey = getApiKey();
+
+  // If key is provided via URL, trust it
+  if (urlKey) {
+    setApiKey(urlKey);
+    input.value = urlKey;
+    status.textContent = "API key loaded from URL.";
+    card.style.display = "none"; // hide key UI
+    return;
+  }
+
+  // Otherwise fall back to localStorage
+  if (storedKey) {
+    input.value = storedKey;
     status.textContent = "API key loaded from localStorage.";
   } else {
     status.textContent = "No key saved yet.";
