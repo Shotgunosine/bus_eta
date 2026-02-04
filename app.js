@@ -1,5 +1,9 @@
 // === Config ===
-const BUS_STOP_IDS = ["1_8410", "1_8553", "1_21912"];
+const BUS_STOPS = [
+  { domId: "8410", stopId: "1_8410" },
+  { domId: "8553", stopId: "1_8553" },
+  { domId: "21912", stopId: "1_21912" },
+];
 const FORT_TOTTEN_STATION_CODE = "B06"; // Fort Totten (WMATA station code)
 const REFRESH_MS = 30_000;
 
@@ -86,21 +90,25 @@ function escapeHtml(s) {
 }
 
 // === Data loaders ===
-async function loadBus(stopId, apiKey) {
-  const card = document.getElementById(`bus-${stopId}`);
+async function loadBus({ domId, stopId }, apiKey) {
+  const card = document.getElementById(`bus-${domId}`);
   setCardStatus(card, "Loading…");
 
-  const data = await wmataFetchJson(WMATA.busPredictions(stopId), apiKey);
+  const data = await wmataFetchJson(
+    WMATA.busPredictions(stopId),
+    apiKey
+  );
 
-  // WMATA NextBus predictions typically returns { StopName, Predictions: [...] }
   const preds = Array.isArray(data?.Predictions) ? data.Predictions : [];
   const rows = preds.slice(0, 6).map((p) => ({
     primary: `${p.RouteID || "Bus"} → ${p.DirectionText || ""}`.trim(),
-    secondary: p.Minutes != null ? `${p.Minutes} min` : (p.Minutes === 0 ? "Due" : "—"),
+    secondary:
+      p.Minutes === 0 ? "Due" :
+      p.Minutes != null ? `${p.Minutes} min` : "—",
   }));
 
   renderList(card, rows);
-  setCardStatus(card, data?.StopName ? data.StopName : `Stop ${stopId}`);
+  setCardStatus(card, data?.StopName || `Stop ${stopId}`);
   setCardUpdated(card);
 }
 
@@ -143,9 +151,9 @@ async function refreshAll() {
   status.textContent = "Refreshing…";
   try {
     await Promise.all([
-      ...BUS_STOP_IDS.map((id) => loadBus(id, apiKey)),
-      loadRail(FORT_TOTTEN_STATION_CODE, apiKey),
-    ]);
+    ...BUS_STOPS.map((s) => loadBus(s, apiKey)),
+    loadRail(FORT_TOTTEN_STATION_CODE, apiKey),
+  ]);
     status.textContent = `Last refresh: ${nowStamp()}`;
   } catch (err) {
     console.error(err);
