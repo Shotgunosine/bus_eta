@@ -1,8 +1,8 @@
 // === Config ===
 const BUS_STOPS = [
-  { domId: "8410", stopId: "1_8410" },
-  { domId: "8553", stopId: "1_8553" },
-  { domId: "21912", stopId: "1_21912" },
+  { domId: "1002503", stopId: "1002503", title: "South Dakota Av NE + Emerson St NE" },
+  { domId: "1002511", stopId: "1002511", title: "Sargent Rd NE + Emerson St NE" },
+  { domId: "1002551", stopId: "1002551", title: "Gallatin St NE + Sargent Rd NE" },
 ];
 const FORT_TOTTEN_STATION_CODE = "B06"; // Fort Totten (WMATA station code)
 const REFRESH_MS = 30_000;
@@ -92,8 +92,6 @@ function escapeHtml(s) {
 // === Data loaders ===
 async function loadBus({ domId, stopId }, apiKey) {
   const card = document.getElementById(`bus-${domId}`);
-  const card = document.getElementById(cardId);
-
   if (!card) {
     console.error(`Missing element #${cardId} in index.html`);
     return;
@@ -143,7 +141,7 @@ async function refreshAll() {
   if (!apiKey) {
     status.textContent = "Add your WMATA API key to load predictions.";
     // Clear cards to avoid stale data
-    for (const id of BUS_STOP_IDS) {
+    for (const id of BUS_STOPS) {
       const card = document.getElementById(`bus-${id}`);
       setCardStatus(card, "No API key");
       renderList(card, []);
