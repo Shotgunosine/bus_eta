@@ -43,6 +43,30 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
+.grid-buses {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.grid-rail {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.list-multicol {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* Remove the old "row separators" look when in grid mode */
+.list-multicol li {
+  border-top: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
 .row {
   display: flex;
   gap: 10px;

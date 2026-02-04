@@ -4,7 +4,10 @@ const BUS_STOPS = [
   { domId: "1002511", stopId: "1002511", title: "Sargent Rd NE + Emerson St NE" },
   { domId: "1002551", stopId: "1002551", title: "Gallatin St NE + Sargent Rd NE" },
 ];
-const FORT_TOTTEN_STATION_CODE = "B06"; // Fort Totten (WMATA station code)
+const RAIL_CARDS = [
+  { code: "B06", domId: "rail-b06", title: "Fort Totten (Red)", lines: ["RD"] },
+  { code: "E06", domId: "rail-e06", title: "Fort Totten (Green/Yellow)", lines: ["GR", "YL"] },
+];
 const REFRESH_MS = 30_000;
 
 // WMATA endpoints (JSON)
@@ -120,17 +123,31 @@ async function loadBus({ domId, stopId }, apiKey) {
   setCardUpdated(card);
 }
 
-async function loadRail(stationCode, apiKey) {
-  const card = document.getElementById(`rail-${stationCode.toLowerCase()}`);
+async function loadRail({ code, domId, title, lines }, apiKey) {
+  const card = document.getElementById(domId);
+  if (!card) {
+    console.error(`Missing element #${domId} in index.html`);
+    return;
+  }
+
+  // Optional: keep the <h2> synced
+  const h2 = card.querySelector("h2");
+  if (h2 && title) h2.textContent = `Rail — ${title} • ${code}`;
+
   setCardStatus(card, "Loading…");
 
-  const data = await wmataFetchJson(WMATA.railPredictions(stationCode), apiKey);
+  const data = await wmataFetchJson(WMATA.railPredictions(code), apiKey);
 
-  // WMATA rail predictions typically returns { Trains: [...] }
-  const trains = Array.isArray(data?.Trains) ? data.Trains : [];
-  const rows = trains.slice(0, 8).map((t) => ({
+  let trains = Array.isArray(data?.Trains) ? data.Trains : [];
+
+  // Filter to the requested lines (RD / GR / YL)
+  if (Array.isArray(lines) && lines.length) {
+    trains = trains.filter((t) => lines.includes(t.Line));
+  }
+
+  const rows = trains.slice(0, 18).map((t) => ({
     primary: `${t.Line || "—"} → ${t.DestinationName || t.Destination || "—"}`,
-    secondary: t.Min != null ? `${t.Min}` : "—", // often "BRD", "ARR", "1", "2", etc.
+    secondary: t.Min != null ? `${t.Min}` : "—", // often "BRD", "ARR", "1", etc.
   }));
 
   renderList(card, rows);
@@ -159,9 +176,9 @@ async function refreshAll() {
   status.textContent = "Refreshing…";
   try {
     await Promise.all([
-    ...BUS_STOPS.map((s) => loadBus(s, apiKey)),
-    loadRail(FORT_TOTTEN_STATION_CODE, apiKey),
-  ]);
+      ...BUS_STOPS.map((s) => loadBus(s, apiKey)),
+      ...RAIL_CARDS.map((rc) => loadRail(rc, apiKey)),
+    ]);
     status.textContent = `Last refresh: ${nowStamp()}`;
   } catch (err) {
     console.error(err);
