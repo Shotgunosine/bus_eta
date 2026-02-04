@@ -1,5 +1,5 @@
 // === Config ===
-const BUS_STOP_IDS = ["8410", "8553", "21912"];
+const BUS_STOP_IDS = ["1_8410", "1_8553", "1_21912"];
 const FORT_TOTTEN_STATION_CODE = "B06"; // Fort Totten (WMATA station code)
 const REFRESH_MS = 30_000;
 
